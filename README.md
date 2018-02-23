@@ -17,11 +17,10 @@ Any other settings are considered strings.
 The message is visible only if addon's setting 'debug' is True.
 
 # Other useful functions:
-*get_addon()* - returns the current addon instance
-
-*get_addon_id()*  
-*get_addon_name()*  
-*get_addon_version()*  
+*get_addon()* - returns the current addon instance  
+*get_addon_id()* - returns current addon id  
+*get_addon_name()* - returns current addon name  
+*get_addon_version()* - returns current addon version  
 *get_profile_dir()* - returns addon profile directory.  
 *get_addon_dir()* - returns addon install directory.  
 *get_resources_dir()* - returns addon resources directory.  
