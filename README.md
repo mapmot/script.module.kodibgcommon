@@ -3,16 +3,17 @@
     <import addon="script.module.kodibgcommon" version="1.0.0"/>
     
 2. Import in addon.py (or other .py files)  
-*from kodibgcommon.utils import **
+_from kodibgcommon.utils import *_
 
 # Easy access to addon settings
-Get any addon setting by calling settings.<id-of-the-setting>
-If you have a bool setting with id 'debug' i.e. <setting id="debug">true</setting>, calling setting.debug will return a boolean value of True or False.  
-if you have a setting holding a digit number i.e. <setting id="id">1234</setting>, calling setting.id will return 1234 as intiger.  
+The settings objects allows easy access to addon settings as long as you know the setting's id.  
+Just call _settings.id-of-the-setting_  
+If you have a bool setting with id 'debug' i.e. `<setting id="debug">true</setting>`, calling setting.debug will return a boolean value of True or False.  
+if you have a setting holding a digit number i.e. `<setting id="id">1234</setting>`, calling setting.id will return 1234 as intiger.  
 Any other settings are considered strings.
 
 # Easy log messages depending on whether addon's 'debug' setting is True or False 
-log(msg, level=xbmc.LOGDEBUG) - the function logs a message to Kodi.log file, prepending the addon id.  
+*log(msg, level=xbmc.LOGDEBUG)* - the function logs a message to Kodi.log file, prepending the addon id.  
 The message is visible only if addon's setting 'debug' is True.
 
 # Other useful functions:
