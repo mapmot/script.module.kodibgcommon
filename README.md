@@ -1,6 +1,6 @@
 # How to use
 1. Include an import statement in addon.xml:  
-    <import addon="script.module.kodibgcommon" version="1.0.0"/>
+    `<import addon="script.module.kodibgcommon" version="1.0.0"/>`
     
 2. Import in addon.py (or other .py files)  
 _from kodibgcommon.utils import *_
