@@ -8,9 +8,21 @@ _from kodibgcommon.utils import *_
 # Easy access to addon settings
 The settings objects allows easy access to addon settings as long as you know the setting's id.  
 Just call _settings.id-of-the-setting_  
-If you have a bool setting with id 'debug' i.e. `<setting id="debug">true</setting>`, calling setting.debug will return a boolean value of True or False.  
+If you have a bool setting with id 'debug' i.e. `<setting id="debug">true</setting>`, calling settings.debug will return a boolean value of True or False.
+```python
+if settings.debug:  
+  execute_function()
+else:  
+  execute_another_function()  
+```  
 if you have a setting holding a digit number i.e. `<setting id="id">1234</setting>`, calling setting.id will return 1234 as intiger.  
 Any other settings are considered strings.
+```python
+if settings.id > 0:  
+  execute_function(settings.id)
+else:  
+  execute_another_function()  
+```  
 
 # Easy log messages depending on whether addon's 'debug' setting is True or False 
 *log(msg, level=xbmc.LOGDEBUG)* - the function logs a message to Kodi.log file, prepending the addon id.  
