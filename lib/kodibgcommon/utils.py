@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# Inspired by
-# https://github.com/aussieaddons/script.module.aussieaddonscommon/
 import os
 import sys
 import xbmc
@@ -170,4 +168,6 @@ def get_unique_device_id():
   
 def notify_error(msg, duration=5000):
   xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%("Грешка", msg, duration, "DefaultFolder.png"))
-  # xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%(translate(32001), msg, duration, "DefaultFolder.png"))
+  
+def notify_success(msg, duration=5000):
+  xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%("Успех", msg, duration, "DefaultFolder.png"))
