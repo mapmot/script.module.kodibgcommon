@@ -4,6 +4,7 @@ import sys
 import xbmc
 import urllib
 import xbmcaddon
+import xbmcplugin
 
 reload(sys)  
 sys.setdefaultencoding('utf8')
@@ -64,44 +65,6 @@ def log(msg, level=xbmc.LOGDEBUG):
       xbmc.log('%s | Logging failure: %s' % (get_addon_id(), er), level)
     except: 
       pass
-    
-def get_params(url=None):
-  """Build a dict from a given Kodi add-on URL"""
-  dict = {}
-  if not url:
-    url = sys.argv[2]
-  pairs = url.lstrip("?").split("&")
-  for pair in pairs:
-    if len(pair) < 3:
-      continue
-    kv = pair.split("=", 1)
-    k = kv[0]
-    v = urllib.unquote_plus(kv[1])
-    dict[k] = v
-  return dict
-
-def make_url(params, add_plugin_path=True):
-  """Build a URL suitable for a Kodi add-on from a dict"""
-  pairs = []
-  for k, v in params.iteritems():
-    k = urllib.quote_plus(str(k))
-    v = urllib.quote_plus(str(v))
-    pairs.append("%s=%s" % (k, v))
-  params_str = "&".join(pairs)
-  if add_plugin_path:
-    return "%s?%s" % (sys.argv[0], params_str)
-  return params_str
-  
-def get_file_dir():
-  """Get our add-on working directory
-  Make our add-on working directory if it doesn't exist and
-  return it.
-  """
-  filedir = os.path.join(
-    xbmc.translatePath('special://temp/'), get_addon_id())
-  if not os.path.isdir(filedir):
-    os.mkdir(filedir)
-  return filedir
 
 def get_profile_dir():
   return xbmc.translatePath( __addon__.getAddonInfo('profile')).decode('utf-8')
@@ -165,7 +128,53 @@ def get_unique_device_id():
   import uuid
   return "KODI_%s_%s_%s" % (get_kodi_build(), get_platform(), uuid.uuid4())
   
+### Navigation funcitons
+    
+def get_params(url=None):
+  """
+  Parses addon URL and returns a dict
+  """
+  dict = {}
+  if not url:
+    url = sys.argv[2]
+  pairs = url.lstrip("?").split("&")
+  for pair in pairs:
+    if len(pair) < 3:
+      continue
+    kv = pair.split("=", 1)
+    k = kv[0]
+    v = urllib.unquote_plus(kv[1])
+    dict[k] = v
+  return dict
+
+def make_url(params, add_plugin_path=True):
+  """
+  Build a URL suitable for a Kodi add-on from a dict
+  Prepends plugin path
+  """
+  pairs = []
+  for k, v in params.iteritems():
+    k = urllib.quote_plus(str(k))
+    v = urllib.quote_plus(str(v))
+    pairs.append("%s=%s" % (k, v))
+  params_str = "&".join(pairs)
+  if add_plugin_path:
+    return "%s?%s" % (sys.argv[0], params_str)
+  return params_str
+
+def add_listitem_folder(listitem, url):
+  """
+  Add a directory list item
+  """
+  add_listitem(listitem, url, True)
+                              
+def add_listitem(listitem, url, isFolder=False):
+  xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), 
+                              url=url, 
+                              listitem=listitem, 
+                              isFolder=isFolder) 
   
+### Notifications
 def notify_error(msg, duration=5000):
   xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%("Грешка", msg, duration, "DefaultFolder.png"))
   
