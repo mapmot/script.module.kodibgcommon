@@ -45,7 +45,7 @@ def get_addon_id():
   return __addon__.getAddonInfo('id')
     
 def get_addon_name():
-  return __addon__.getAddonInfo('name')
+  return __addon__.getAddonInfo('name').decode('utf-8')
     
 def get_addon_version():
   return __addon__.getAddonInfo('version')
@@ -53,19 +53,6 @@ def get_addon_version():
 def translate(msg_id):
   return __addon__.getLocalizedString(msg_id)
   
-def log(msg, level=xbmc.LOGDEBUG):
-  try:
-    if settings.debug and level == xbmc.LOGDEBUG:
-      level = xbmc.LOGNOTICE
-    xbmc.log("%s v%s | %s" % (get_addon_id(), get_addon_version(), str(msg).encode('utf-8')), level)
-  except:
-    try:
-      import traceback
-      er = traceback.format_exc(sys.exc_info())
-      xbmc.log('%s | Logging failure: %s' % (get_addon_id(), er), level)
-    except: 
-      pass
-
 def get_profile_dir():
   return xbmc.translatePath( __addon__.getAddonInfo('profile')).decode('utf-8')
 
@@ -73,8 +60,7 @@ def get_addon_dir():
   return xbmc.translatePath( __addon__.getAddonInfo('path')).decode('utf-8')
   
 def get_resources_dir():
-  return xbmc.translatePath(os.path.join(get_addon_dir(), 'resources'))
-  
+  return xbmc.translatePath(os.path.join(get_addon_dir(), 'resources')).decode('utf-8')
   
 def get_platform():
   """Get platform
@@ -124,12 +110,36 @@ def log_kodi_platform_version():
   platform = get_platform()
   log("Kodi %s running on %s" % (version, platform))
     
+def get_kodi_language(): 
+  xbmc.getLanguage()
+  
 def get_unique_device_id():
   import uuid
   return "KODI_%s_%s_%s" % (get_kodi_build(), get_platform(), uuid.uuid4())
   
-### Navigation funcitons
-    
+###
+### Log functions
+###
+def log(msg, level=xbmc.LOGDEBUG):
+  try:
+    if settings.debug and level == xbmc.LOGDEBUG:
+      level = xbmc.LOGNOTICE
+    xbmc.log("%s v%s | %s" % (get_addon_id(), get_addon_version(), str(msg).encode('utf-8')), level)
+  except:
+    try:
+      import traceback
+      er = traceback.format_exc(sys.exc_info())
+      xbmc.log('%s | Logging failure: %s' % (get_addon_id(), er), level)
+    except: 
+      pass
+
+def log_last_exception():
+  import traceback
+  log(traceback.format_exc(sys.exc_info()), xbmc.LOGERROR)
+  
+###
+### Navigation functions
+###
 def get_params(url=None):
   """
   Parses addon URL and returns a dict
@@ -162,21 +172,59 @@ def make_url(params, add_plugin_path=True):
     return "%s?%s" % (sys.argv[0], params_str)
   return params_str
 
+def get_addon_handle():
+  try: 
+    return int(sys.argv[1])
+  except: 
+    return -1  
+  
 def add_listitem_folder(listitem, url):
   """
   Add a directory list item
   """
-  add_listitem(listitem, url, True)
+  add_listitem(listitem, 
+              url, 
+              True)
                               
 def add_listitem(listitem, url, isFolder=False):
-  xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), 
-                              url=url, 
-                              listitem=listitem, 
-                              isFolder=isFolder) 
+  """
+  Short syntax for adding a list item
+  """
+  xbmcplugin.addDirectoryItem(handle = get_addon_handle(),
+                              url = url,
+                              listitem = listitem,
+                              isFolder = isFolder)
+                              
+###  
+### Notifications & built-in functions
+###
+def notify_error(msg, duration=5000, icon="DefaultFolder.png"):
+  Notification("Грешка", msg, icon)
   
-### Notifications
-def notify_error(msg, duration=5000):
-  xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%("Грешка", msg, duration, "DefaultFolder.png"))
+def notify_success(msg, duration=5000, icon="DefaultFolder.png"):
+  Notification("Успех", msg, icon)
+
+def Notification(title, msg, duration=5000, icon="DefaultFolder.png"):
+  '''
+  Will display a notification dialog with the specified header and message, 
+  in addition you can set the length of time it displays in milliseconds and a icon image
+  '''
+  xbmc.executebuiltin('Notification(%s,%s,%s,%s)' % (title, msg, duration, icon))
   
-def notify_success(msg, duration=5000):
-  xbmc.executebuiltin('Notification(%s,%s,%s,%s)'%("Успех", msg, duration, "DefaultFolder.png"))
+def AlarmClock(name, script, interval, isSilent=True, loop=False):
+  '''
+  Executes the builtin AlarmClock function
+  '''
+  params = "'%s', %s, %s" % (name, script, interval)
+
+  if isSilent:
+    params += ", silent"
+  
+  if loop:
+    params += ", loop"
+    
+  command = "AlarmClock(%s)" % params
+  xbmc.executebuiltin(command)
+  
+  
+  
