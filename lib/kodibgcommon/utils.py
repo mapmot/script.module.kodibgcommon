@@ -50,6 +50,8 @@ def get_addon_name():
 def get_addon_version():
   return __addon__.getAddonInfo('version')
 
+  
+
 def translate(msg_id):
   return __addon__.getLocalizedString(msg_id)
   
@@ -61,6 +63,9 @@ def get_addon_dir():
   
 def get_resources_dir():
   return xbmc.translatePath(os.path.join(get_addon_dir(), 'resources')).decode('utf-8')
+
+def get_addon_icon():
+  return xbmc.translatePath( __addon__.getAddonInfo('icon')).decode('utf-8')
   
 def get_platform():
   """Get platform
