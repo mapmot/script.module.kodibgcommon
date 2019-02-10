@@ -3,6 +3,7 @@ import os
 import sys
 import xbmc
 import urllib
+import xbmcgui
 import xbmcaddon
 import xbmcplugin
 
@@ -183,22 +184,23 @@ def get_addon_handle():
   except: 
     return -1  
   
-def add_listitem_folder(listitem, url):
+def add_listitem_folder(title, url):
   """
   Add a directory list item
   """
-  add_listitem(listitem, 
+  add_listitem(title, 
               url, 
               True)
                               
-def add_listitem(listitem, url, isFolder=False):
+def add_listitem(title, url, isFolder=False):
   """
   Short syntax for adding a list item
   """
-  xbmcplugin.addDirectoryItem(handle = get_addon_handle(),
-                              url = url,
-                              listitem = listitem,
-                              isFolder = isFolder)
+  listitem = xbmcgui.ListItem(title)
+  xbmcplugin.addDirectoryItem(get_addon_handle(),
+                              url,
+                              listitem,
+                              isFolder)
                               
 ###  
 ### Notifications & built-in functions
