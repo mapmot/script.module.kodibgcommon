@@ -184,23 +184,45 @@ def get_addon_handle():
   except: 
     return -1  
   
-def add_listitem_folder(title, url):
+def add_listitem_folder(title, url, **kwargs):
   """
   Add a directory list item
   """
   add_listitem(title, 
               url, 
-              True)
+              True, **kwargs)
                               
-def add_listitem(title, url, isFolder=False):
+def add_listitem(title, url, isFolder=False, **kwargs):
   """
   Short syntax for adding a list item
   """
-  listitem = xbmcgui.ListItem(title)
+  
+  li = xbmcgui.ListItem(title, **kwargs)
   xbmcplugin.addDirectoryItem(get_addon_handle(),
                               url,
-                              listitem,
+                              li,
                               isFolder)
+                              
+def add_listitem_unresolved(title, url, **kwargs):
+
+  li = xbmcgui.ListItem(title, **kwargs)
+  li.setInfo (type = "Video", infoLabels = { "Title" : ''} )
+  li.setProperty("IsPlayable", 'True')  
+  
+  xbmcplugin.addDirectoryItem(get_addon_handle(),
+                              url,
+                              li,
+                              False)
+  
+def add_listitem_resolved_url(title, stream):
+
+  li = xbmcgui.ListItem(title, path=stream)
+  li.setInfo (type = "Video", infoLabels = { "Title" : ''} )
+  li.setProperty("IsPlayable", 'True')  
+  
+  xbmcplugin.setResolvedUrl(get_addon_handle(), 
+                            True, 
+                            li)
                               
 ###  
 ### Notifications & built-in functions
