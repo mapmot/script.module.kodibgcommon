@@ -2,13 +2,13 @@
 import os
 import sys
 import xbmc
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import xbmcgui
 import xbmcaddon
 import xbmcplugin
+import importlib
 
-reload(sys)  
-sys.setdefaultencoding('utf8')
+importlib.reload(sys)  
 
 __addon__   = xbmcaddon.Addon()
     
@@ -46,7 +46,7 @@ def get_addon_id():
   return __addon__.getAddonInfo('id')
     
 def get_addon_name():
-  return __addon__.getAddonInfo('name').decode('utf-8')
+  return __addon__.getAddonInfo('name')
     
 def get_addon_version():
   return __addon__.getAddonInfo('version')
@@ -57,16 +57,16 @@ def translate(msg_id):
   return __addon__.getLocalizedString(msg_id)
   
 def get_profile_dir():
-  return xbmc.translatePath( __addon__.getAddonInfo('profile')).decode('utf-8')
+  return xbmc.translatePath( __addon__.getAddonInfo('profile'))
 
 def get_addon_dir():
-  return xbmc.translatePath( __addon__.getAddonInfo('path')).decode('utf-8')
+  return xbmc.translatePath( __addon__.getAddonInfo('path'))
   
 def get_resources_dir():
-  return xbmc.translatePath(os.path.join(get_addon_dir(), 'resources')).decode('utf-8')
+  return xbmc.translatePath(os.path.join(get_addon_dir(), 'resources'))
 
 def get_addon_icon():
-  return xbmc.translatePath( __addon__.getAddonInfo('icon')).decode('utf-8')
+  return xbmc.translatePath( __addon__.getAddonInfo('icon'))
   
 def get_platform():
   """Get platform
@@ -130,18 +130,18 @@ def log(msg, level=xbmc.LOGDEBUG):
   try:
     if settings.debug and level == xbmc.LOGDEBUG:
       level = xbmc.LOGNOTICE
-    xbmc.log("%s v%s | %s" % (get_addon_id(), get_addon_version(), str(msg).encode('utf-8')), level)
+    xbmc.log("%s v%s | %s" % (get_addon_id(), get_addon_version(), str(msg)), level)
   except:
     try:
       import traceback
-      er = traceback.format_exc(sys.exc_info())
+      er = traceback.format_exc()
       xbmc.log('%s | Logging failure: %s' % (get_addon_id(), er), level)
     except: 
       pass
 
 def log_last_exception():
   import traceback
-  log(traceback.format_exc(sys.exc_info()), xbmc.LOGERROR)
+  log(traceback.format_exc(), xbmc.LOGERROR)
   
 ###
 ### Navigation functions
@@ -159,7 +159,7 @@ def get_params(url=None):
       continue
     kv = pair.split("=", 1)
     k = kv[0]
-    v = urllib.unquote_plus(kv[1])
+    v = urllib.parse.unquote_plus(kv[1])
     dict[k] = v
   return dict
 
@@ -169,9 +169,9 @@ def make_url(params, add_plugin_path=True):
   Prepends plugin path
   """
   pairs = []
-  for k, v in params.iteritems():
-    k = urllib.quote_plus(str(k))
-    v = urllib.quote_plus(str(v))
+  for k, v in list(params.items()):
+    k = urllib.parse.quote_plus(str(k))
+    v = urllib.parse.quote_plus(str(v))
     pairs.append("%s=%s" % (k, v))
   params_str = "&".join(pairs)
   if add_plugin_path:
